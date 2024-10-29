@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/base.js') }}"></script>
+
+    <!-- {{ font_awesome.load_js() }} -->
+
+    <title>Информация о Материалах</title>
+</head>
+
+<body {{ 'data-bs-theme=dark' if session['theme'] == 'dark' else 'data-bs-theme="light"' }}>
+    <!-- Модальный диалог для отображения сообщения об ошибке -->
+    <div class="modal" id="errModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Заголовок диалога -->
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                </div>
+                <!-- Тело диалога -->
+                <div class="modal-body">
+                </div>
+                <!-- Область с кнопкой закрытия окна -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальный диалог для разрешения удаления -->
+    <div class="modal" id="removeModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Заголовок диалога -->
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                </div>
+                <!-- Тело диалога -->
+                <div class="modal-body">
+                </div>
+                <!-- Область с кнопками -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Отменить</button>
+                    <button type="button" id="removeBtn" data-id="" class="btn btn-danger" data-bs-dismiss="modal">Удалить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <!-- <h2>Информационная система "Студенты вуза"</h2> -->
+                <nav class="navbar navbar-expand-lg { 'navbar-dark' if session['theme'] == 'dark' else 'navbar-light' }">
+                    {% if role is defined %}
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active"><a class="nav-link" href="{{ url_for('students') }}">Студенты</a> </li>
+                        <li class="nav-item active"><a class="nav-link" href="{{ url_for('groups') }}">Группы</a></li>
+                        <li class="nav-item active"><a class="nav-link" href="{{ url_for('departments') }}">Кафедры</a></li>
+                         {% if role == 'admin' %}
+                            <li class="nav-item active"><a class="nav-link" href="{{ url_for('register') }}">Регистрация</a></li>
+                         {% endif %}
+                        <li class="nav-item active"><a class="nav-link" href="{{ url_for('home') }}">О приложении</a></li>
+                    </ul>
+                    {% endif %}
+                    <!-- Тип пользователя -->
+                    <ul class="navbar-nav ms-auto mb-2">
+                        {% if role == 'admin' %}
+                            <li class="nav-item active margin-top-12 margin-right-6" style="color: red; vertical-align: middle;"> Администратор</li>
+                        {% endif %}
+                        {% if role == 'user' %}
+                            <li class="nav-item active margin-top-12 margin-right-6"> Пользователь</li>
+                        {% endif %}
+                        <li class="nav-item active"><a class="btn btn-warning margin-top-6 margin-right-6" href="{{ url_for('logout') }}">Выйти</a> </li>
+                    </ul>
+                    <!-- Выбор темы оформления -->
+                    <div style="padding-top: 10px; padding-bottom: 10px;">
+                        <input class="form-check-input" type="checkbox" id="themeToggle" disabled
+                            {{ 'checked' if session['theme'] == 'dark' else '' }}>
+                        <label class="form-check-label" for="themeToggle">Темная тема</label>
+                    </div>
+                </nav>
+                <!-- Остальное содержимое страницы -->
+                {% block content %} {% endblock %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <title>Аналитика</title>
+</head>
+
+<body>
+
+    <!-- Modal -->
+    <div class="modal" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Заголовок -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Команды трансформера</h4>
+                </div>
+                <!-- Тело -->
+                <div class="modal-body">
+                </div>
+                <!-- Область с кнопками -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-prinary" data-bs-dismiss="modal">Закрыть</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <h2>Аналитика</h2>
+                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active"><a class="nav-link" href="{{ url_for('students') }}">Студенты</a> </li>
+                        <li class="nav-item active"><a class="nav-link" href="{{ url_for('groups') }}">Группы</a></li>
+                        <li class="nav-item active"><a class="nav-link" href="{{ url_for('departments') }}">Кафедры</a></li>
+                        <li class="nav-item active"><a class="nav-link" href="{{ url_for('analytics') }}">Аналитика</a></li>
+                        <li class="nav-item active"><a class="nav-link" href="{{ url_for('home') }}">О приложении</a></li>                         
+                    </ul>
+                </nav>
+                <div class="d-flex justify-content-center" style="margin-top: 12px; margin-bottom: 12px;">
+                    <input type="text" id="prompt" name="prompt" class="form-control">
+                    <button id="getResponse" type="button" class="btn btn-default pull-right">Выполнить</button>
+                </div>
+                <!-- Остальное содержимое страницы -->
+                <div>
+                    {{ plot_div|safe }}
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    $(document).ready(function () {
+        $('#getResponse').click(function (event) {
+            prompt = $('#prompt').val(),
+
+            $.ajax({
+                type: 'GET',
+                url: '/answer',
+                data: { 'prompt': prompt },
+                success: function (response) {
+                    // Перезагрузка страницы
+                    // window.location.replace('/graph');
+                    var modalBody = $('#myModal .modal-body');
+                    // Очистка существующего содержимого
+                    modalBody.empty();
+                    // Добавление новых данных в modal-body
+                    modalBody.append('<p>' + response.result + '</p>');
+
+                    $("#myModal").modal("show")
+                },
+                error: function (xhr, status, error) {
+                    // Обработка ошибки
+                }
+            });
+        });
+
+        // $("#go").click(function () {
+        //     $("#myModal").modal("show")
+        // });
+    });
+</script>
+
+</html>
